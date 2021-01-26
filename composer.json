@@ -1,0 +1,12 @@
+{
+    "name": "siddeshwar/quick-notes-app",
+    "description": "A quick notes app indeed!",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Siddeshwar",
+            "email": "siddeshwar.work@gmail.com"
+        }
+    ],
+    "require": {}
+}
