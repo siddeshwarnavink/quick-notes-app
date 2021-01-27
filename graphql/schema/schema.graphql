@@ -1,0 +1,35 @@
+type User {
+  id: Int!
+  username: String!
+  email: String!
+}
+
+type AuthData {
+  userId: Int!
+  token: String!
+}
+
+type ValidateToken {
+  newToken: String!
+  user: User
+}
+
+type RootQuery {
+  loginUser(email: String!, password: String!): AuthData
+  verifyLogin(token: String!): ValidateToken
+}
+
+type RootMutation {
+  createUser(username: String!, email: String!, password: String!): User
+  editUser(
+    userId: Int!
+    username: String!
+    isAdmin: Boolean
+    newPassword: String
+  ): User
+}
+
+schema {
+  query: RootQuery
+  mutation: RootMutation
+}
