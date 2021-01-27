@@ -14,9 +14,18 @@ type ValidateToken {
   user: User
 }
 
+type Note {
+  id: Int
+  title: String!
+  content: String
+  creator: User
+}
+
 type RootQuery {
   loginUser(email: String!, password: String!): AuthData
   verifyLogin(token: String!): ValidateToken
+  userNotes: [Note]!
+  singleNote(id: Int): Note
 }
 
 type RootMutation {
@@ -27,6 +36,10 @@ type RootMutation {
     isAdmin: Boolean
     newPassword: String
   ): User
+
+  createNote(title: String!, content: String): Note
+  updateNote(id: Int, title: String!, content: String!): Note
+  deleteNote(id: Int): Note
 }
 
 schema {

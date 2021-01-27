@@ -22,10 +22,10 @@ return [
                     'token' => $jwt
                 ];
             } else {
-                throw new Exception('Invalid password!');
+                throw new Exception('Invalid password.');
             }
         } else {
-            throw new Exception('User doesn\'t exists!');
+            throw new Exception('User doesn\'t exists.');
         }
     },
 
@@ -43,14 +43,14 @@ return [
         ]);
 
         if ($validation->failed()) {
-            throw new Exception('Invalid user input!');
+            throw new Exception('Invalid user input.');
         }
 
         if (!User::where('username', $args['username'])->first()) {
             $userData['password'] = password_hash($args['password'], PASSWORD_DEFAULT);
             User::create($userData);
         } else {
-            throw new Exception('User already exists!');
+            throw new Exception('User already exists.');
         }
 
         return User::where('username', $args['username'])
