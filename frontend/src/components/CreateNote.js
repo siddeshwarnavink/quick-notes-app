@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 import { Button } from './UI'
 import useForm from '../hooks/useForm.js';
+import { useStore } from '../store/store';
 import { createNotesForm } from '../shared/forms';
 
 const CreateNoteForm = styled.form`
@@ -17,7 +18,7 @@ const CreateNoteFormActions = styled.section`
 `;
 
 const CreateNote = (props) => {
-    const [renderFormInputs, isFormValid, formFields] = useForm(createNotesForm);
+    const [renderFormInputs, isFormValid, formFields] = useForm(props.createNotesForm);
 
     const createNoteHandler = (event) => {
         event.preventDefault();
@@ -48,4 +49,35 @@ const CreateNote = (props) => {
     );
 };
 
-export default CreateNote;
+const CreateNoteHook = (parentProps) => {
+    const [state, dispatch] = useStore();
+
+    const currentNote = state.notes.notes.find(note => note.id === state.notes.selectedNote);
+
+    let displayForm = createNotesForm
+
+    if (parentProps.editing) {
+        displayForm['title'].value = currentNote.title;
+        displayForm['title'].valid = true;
+        displayForm['title'].touched = true;
+
+        displayForm['content'].value = currentNote.content;
+        displayForm['content'].valid = true;
+        displayForm['content'].touched = true;
+    }
+
+    return (
+        <CreateNote
+            currentNote={currentNote}
+            createNotesForm={displayForm}
+            {...parentProps}
+        />
+    )
+}
+
+
+CreateNoteHook.defaultProps = {
+    editing: false
+};
+
+export default CreateNoteHook;

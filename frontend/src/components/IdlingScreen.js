@@ -1,6 +1,8 @@
+import React from 'react';
 import styled from 'styled-components';
 
 import { Icon } from './UI';
+import { useStore } from '../store/store';
 
 const IdlingScreenWrapper = styled.main`
     text-align: center;
@@ -47,4 +49,15 @@ const IdlingScreen = () => {
     )
 };
 
-export default IdlingScreen;
+const IdlingScreenHook = () => {
+    const dispatch = useStore()[1];
+
+    React.useEffect(() => {
+        dispatch('CLEAR_NOTE_SELECTION');
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    return <IdlingScreen />;
+}
+
+export default IdlingScreenHook;

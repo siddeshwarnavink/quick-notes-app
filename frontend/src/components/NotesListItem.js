@@ -35,13 +35,17 @@ const NotesListItem = (props) => {
 
     return (
         <WrapperComponent>
-            <Link to="/main/note/1" style={{
-                textDecoration: 'none',
-                color: '#000'
-            }}>
+            <Link
+                to={`/main/note/${props.id}`}
+                onClick={props.onClick}
+                style={{
+                    textDecoration: 'none',
+                    color: '#000'
+                }}
+            >
                 <NotesListItemWrapper>
-                    <NotesListItemTitle>Notes title</NotesListItemTitle>
-                    <NotesListItemContent>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</NotesListItemContent>
+                    <NotesListItemTitle>{props.title}</NotesListItemTitle>
+                    <NotesListItemContent>{props.content}</NotesListItemContent>
                 </NotesListItemWrapper>
             </Link>
         </WrapperComponent>

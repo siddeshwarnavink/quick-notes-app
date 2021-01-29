@@ -4,6 +4,7 @@ import styled from "styled-components";
 
 import { Button, IconButton, Modal, ButtonGroup } from './UI';
 import CreateNote from './CreateNote';
+import { useStore } from '../store/store';
 
 const NoteDetailScreenCard = styled.section`
     background-color: #fff;
@@ -43,10 +44,11 @@ const NoteDetailScreen = (props) => {
     }
 
     const goBackHandler = () => {
-        if(isEditActive) {
+        if (isEditActive) {
             setIsEditActive(false);
         } else {
-            props.history.goBack();
+            // props.history.goBack();
+            props.history.push('/main/homePage');
         }
     }
 
@@ -56,12 +58,13 @@ const NoteDetailScreen = (props) => {
     };
 
     let pageContent = (
-        <NoteContent>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</NoteContent>
+        <NoteContent>{props.currentNote.content}</NoteContent>
     );
 
-    if(isEditActive) {
+    if (isEditActive) {
         pageContent = (
             <CreateNote
+                editing
                 onCancel={goBackHandler}
             />
         )
@@ -72,7 +75,7 @@ const NoteDetailScreen = (props) => {
             <NoteDetailScreenCard>
                 <NoteDetailHeader>
                     <IconButton icon="arrow_back" onClick={goBackHandler} />
-                    <NoteDetailHeaderCaption>Note title</NoteDetailHeaderCaption>
+                    <NoteDetailHeaderCaption>{props.currentNote.title}</NoteDetailHeaderCaption>
 
                     <NoteDetailHeaderSpacer />
 
@@ -95,4 +98,29 @@ const NoteDetailScreen = (props) => {
     );
 }
 
-export default withRouter(NoteDetailScreen);
+const NoteDetailScreenHook = (parentProps) => {
+    const [state, dispatch] = useStore();
+
+    React.useEffect(() => {
+        if (state.notes.selectedNote !== parentProps.match.params.noteId) {
+            dispatch('TOGGLE_NOTE_SELECTION', parseInt(parentProps.match.params.noteId));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    const toggleSelectNote = (noteId) => {
+        dispatch('TOGGLE_NOTE_SELECTION', noteId);
+    };
+
+    const currentNote = state.notes.notes.find(note => note.id === parseInt(parentProps.match.params.noteId));
+
+    return (
+        <NoteDetailScreen
+            currentNote={currentNote}
+            toggleSelectNote={() => toggleSelectNote(currentNote.id)}
+            {...parentProps}
+        />
+    )
+}
+
+export default withRouter(NoteDetailScreenHook);
