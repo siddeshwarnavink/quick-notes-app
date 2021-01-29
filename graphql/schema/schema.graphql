@@ -6,7 +6,8 @@ type User {
 
 type AuthData {
   userId: Int!
-  token: String!
+  token: String!,
+  user: User
 }
 
 type ValidateToken {

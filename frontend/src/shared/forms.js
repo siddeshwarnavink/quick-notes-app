@@ -37,7 +37,7 @@ export const loginForm = {
         ...createFormFieldConfig("Password", "password", "password"),
         validationRules: [
             validations.requiredRule("password"),
-            validations.minLengthRule("password", 8),
+            validations.minLengthRule("password", 5),
         ]
     },
 };
@@ -61,7 +61,7 @@ export const signupForm = {
         ...createFormFieldConfig("Password", "password", "password"),
         validationRules: [
             validations.requiredRule("password"),
-            validations.minLengthRule("password", 8),
+            validations.minLengthRule("password", 5),
         ]
     },
 };

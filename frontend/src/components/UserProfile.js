@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { withRouter } from 'react-router-dom';
 
 import { Button } from './UI';
 import { useStore } from '../store/store';
@@ -22,20 +23,26 @@ const UserProfile = (props) => {
             <h1>{props.userData.username}</h1>
 
             <p>{props.notesCount} Notes</p>
-            <Button varient="solid">Logout</Button>
+            <Button varient="solid" onClick={props.onLogout}>Logout</Button>
         </UserProfileWrapper>
     );
 };
 
-const UserProfileHook = () => {
-    const state = useStore()[0];
+const UserProfileHook = (parentProps) => {
+    const [state, dispatch] = useStore();
+
+    const logoutUserHandler = () => {
+        dispatch('AUTH_LOGOUT');
+        parentProps.history.push('/auth');
+    }
 
     return (
         <UserProfile
             userData={state.auth.userData}
             notesCount={state.notes.notes.length}
+            onLogout={logoutUserHandler}
         />
     )
 }
 
-export default UserProfileHook;
+export default withRouter(UserProfileHook);

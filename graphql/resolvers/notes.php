@@ -1,7 +1,7 @@
 <?php
 
-use Respect\Validation\Rules\Not;
 use Siddeshrocks\Models\Notes;
+use Siddeshrocks\Models\User;
 use Respect\Validation\Validator as v;
 
 return [
@@ -91,5 +91,22 @@ return [
         } else {
             throw new Exception('Note dosen\'t exist.');
         }
+    },
+
+    'userNotes' =>  function ($root, $args) {
+        AuthRequired($root);
+
+        $fetchedNotes = Notes::where('user', $root['isAuth']->user->id)
+            ->latest()
+            ->get();
+
+        foreach ($fetchedNotes as $index => $fetchedNote) {
+            $fetchedNote['creator'] = User::find($root['isAuth']->user->id);
+
+            $fetchedNotes[$index] = $fetchedNote;
+        }
+
+
+        return $fetchedNotes;
     }
 ];

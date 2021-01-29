@@ -1,9 +1,14 @@
 import React from 'react';
 
 import NotesListItem from './NotesListItem';
-import { useStore } from '../store/store';
+import { Spinner } from './UI';
+import { useStore } from '../store/store'
+import useErrorModal from '../hooks/useErrorModal';
+import gqlEndpoint from '../constants/gql-endpoint';
 
 const NotesList = (props) => {
+    const [renderErrorModal] = useErrorModal(props.error);
+
     const toggleSelectNoteHandler = (noteId) => {
         props.toggleSelectNote(noteId);
     }
@@ -21,13 +26,50 @@ const NotesList = (props) => {
 
     return (
         <React.Fragment>
-            {notesList}
+            {renderErrorModal()}
+            {props.loading ? <Spinner /> : notesList}
         </React.Fragment>
     );
 };
 
 const NotesListHook = () => {
     const [state, dispatch] = useStore();
+    const [error, setError] = React.useState(null);
+
+    React.useEffect(() => {
+        (async () => {
+            dispatch('SET_NOTES_LOADING', true);
+
+            const response = await fetch(gqlEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${state.auth.token}`
+                },
+                body: JSON.stringify({
+                    query: `
+                        query {
+                            userNotes {
+                                id,
+                                title,
+                                content,
+                            }
+                        }
+                    `
+                })
+            });
+            const data = await response.json();
+
+            if ('errors' in data) {
+                setError(data.errors[0]);
+            } else {
+                dispatch('SET_NOTES', data.data.userNotes);
+            }
+
+            dispatch('SET_NOTES_LOADING', false);
+        })();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const toggleSelectNote = (noteId) => {
         dispatch('TOGGLE_NOTE_SELECTION', noteId);
@@ -35,10 +77,10 @@ const NotesListHook = () => {
 
     return (
         <NotesList
-            isLoading={state.notes.isLoading}
+            loading={state.notes.isLoading}
             loadedNotes={state.notes.notes}
             selectedNote={state.notes.selectedNote}
-            error={state.notes.error}
+            error={error}
             toggleSelectNote={toggleSelectNote}
         />
     );

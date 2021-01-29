@@ -19,7 +19,8 @@ return [
 
                 return [
                     'userId' => $user->id,
-                    'token' => $jwt
+                    'token' => $jwt,
+                    'user' => $user
                 ];
             } else {
                 throw new Exception('Invalid password.');

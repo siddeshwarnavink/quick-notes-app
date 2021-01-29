@@ -13,15 +13,8 @@ export const actions = {
         return {
             notes: {
                 ...curState.notes,
-                notes: loadedNotes
-            }
-        }
-    },
-    SET_NOTES_ERROR: (curState, error) => {
-        return {
-            notes: {
-                ...curState.notes,
-                error
+                notes: loadedNotes,
+                fetched: true
             }
         }
     },
@@ -54,13 +47,10 @@ export const actions = {
 const configreStore = () => {
     initStore(actions, {
         notes: {
-            isLoading: false,
-            notes: [
-                { id: 1, title: "Note A", content: "This is content of note A" },
-                { id: 2, title: "Note B", content: "This is content of note B" },
-            ],
+            notes: [],
             selectedNote: null,
-            error: null
+            isLoading: false,
+            fetched: false
         }
     });
 }

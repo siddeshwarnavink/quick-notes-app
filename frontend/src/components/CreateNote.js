@@ -1,9 +1,11 @@
+import React from 'react';
 import styled from 'styled-components';
 
-import { Button } from './UI'
+import { Button, Spinner } from './UI'
 import useForm from '../hooks/useForm.js';
 import { useStore } from '../store/store';
 import { createNotesForm } from '../shared/forms';
+import gqlEndpoint from '../constants/gql-endpoint';
 
 const CreateNoteForm = styled.form`
     padding: 1rem;
@@ -25,32 +27,41 @@ const CreateNote = (props) => {
 
         if (!isFormValid()) return;
 
-        console.log('Valid!', formFields);
+        props.onUpdateNote(formFields, () => props.closeModal());
     };
 
     return (
         <CreateNoteForm onSubmit={createNoteHandler}>
-            {renderFormInputs()}
+            <React.Fragment>
+                {props.loading ? <Spinner /> : (
+                    <React.Fragment>
+                        {renderFormInputs()}
 
-            <CreateNoteFormActions>
-                <Button
-                    varient="solid"
-                    btnType="submit"
-                    disabled={!isFormValid()}
-                >
-                    Submit
-                </Button>
+                        <CreateNoteFormActions>
+                            <Button
+                                varient="solid"
+                                btnType="submit"
+                                disabled={!isFormValid()}
+                            >
+                                Submit
+                            </Button>
 
-                <Button varient="flat" onClick={props.onCancel}>
-                    Cancel
-                </Button>
-            </CreateNoteFormActions>
+                            <Button varient="flat" onClick={props.onCancel}>
+                                Cancel
+                            </Button>
+                        </CreateNoteFormActions>
+                    </React.Fragment>
+                )}
+            </React.Fragment>
+
         </CreateNoteForm>
     );
 };
 
 const CreateNoteHook = (parentProps) => {
     const [state, dispatch] = useStore();
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [error, setError] = React.useState(null);
 
     const currentNote = state.notes.notes.find(note => note.id === state.notes.selectedNote);
 
@@ -66,10 +77,88 @@ const CreateNoteHook = (parentProps) => {
         displayForm['content'].touched = true;
     }
 
+    const updateNoteHandler = async (formFields, callback) => {
+        setIsLoading(true);
+
+        if (!parentProps.editing) {
+            const response = await fetch(gqlEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${state.auth.token}`
+                },
+                body: JSON.stringify({
+                    query: `
+                    mutation {
+                        createNote(title:"${formFields.title}", content:"${formFields.content}") {
+                            id,
+                            title,
+                            content
+                        }
+                    }
+                `
+                })
+            });
+            const data = await response.json();
+
+            if ('errors' in data) {
+                setError(data.errors[0]);
+            } else {
+                dispatch('SET_NOTES', [
+                    {
+                        id: data.data.createNote.id,
+                        title: data.data.createNote.title,
+                        content: data.data.createNote.content,
+                    },
+                    ...state.notes.notes
+                ]);
+                callback();
+            }
+        } else {
+            const response = await fetch(gqlEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${state.auth.token}`
+                },
+                body: JSON.stringify({
+                    query: `
+                    mutation {
+                        updateNote(id: ${currentNote.id},title:"${formFields.title}", content:"${formFields.content}") {
+                            id,
+                            title,
+                            content
+                        }
+                    }
+                `
+                })
+            });
+            const data = await response.json();
+
+            if ('errors' in data) {
+                setError(data.errors[0]);
+            } else {
+                dispatch('SET_NOTES', [
+                    {
+                        id: data.data.updateNote.id,
+                        title: data.data.updateNote.title,
+                        content: data.data.updateNote.content,
+                    },
+                    ...state.notes.notes.filter(note => note.id !== currentNote.id)
+                ]);
+                callback();
+            }
+        }
+        setIsLoading(false);
+    }
+
     return (
         <CreateNote
+            loading={isLoading}
+            error={error}
             currentNote={currentNote}
             createNotesForm={displayForm}
+            onUpdateNote={updateNoteHandler}
             {...parentProps}
         />
     )
@@ -77,7 +166,8 @@ const CreateNoteHook = (parentProps) => {
 
 
 CreateNoteHook.defaultProps = {
-    editing: false
+    editing: false,
+    closeModal: () => { }
 };
 
 export default CreateNoteHook;

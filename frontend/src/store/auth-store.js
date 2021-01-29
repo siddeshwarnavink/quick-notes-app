@@ -9,12 +9,15 @@ export const actions = {
             }
         };
     },
-    SET_AUTH_USER: (curState, userData, token) => {
+    SET_AUTH_USER: (curState, { userData, token }) => {
+        localStorage.setItem('authToken', token);
+
         return {
-            notes: {
+            auth: {
                 ...curState.auth,
                 userData,
-                token
+                token,
+                isAuthenticated: true,
             }
         };
     },
@@ -26,7 +29,9 @@ export const actions = {
             }
         }
     },
-    AUTH_LOGOUT: (curState, error) => {
+    AUTH_LOGOUT: (curState) => {
+        localStorage.removeItem('authToken');
+
         return {
             auth: {
                 ...curState.auth,
@@ -45,10 +50,7 @@ const configreStore = () => {
             isAuthenticated: false,
             token: null,
             error: null,
-            userData: {
-                username: "John doe",
-                email: "john@gmail.com"
-            }
+            userData: {}
         }
     });
 }
