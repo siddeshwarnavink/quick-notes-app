@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { Button, IconButton, Modal, ButtonGroup, Spinner } from './UI';
 import CreateNote from './CreateNote';
 import { useStore } from '../store/store';
+import NotificationContext from '../context/notification-context';
 import gqlEndpoint from '../constants/gql-endpoint';
 
 const NoteDetailScreenCard = styled.section`
@@ -14,6 +15,10 @@ const NoteDetailScreenCard = styled.section`
     margin-left: 1rem;
     border-radius: 10px;
     margin-top: 10px;
+
+    @media (max-width: 600px) {
+        margin-left: .2rem;
+    }
 `;
 
 const NoteDetailHeader = styled.header`
@@ -115,6 +120,7 @@ const NoteDetailScreenHook = (parentProps) => {
     const [state, dispatch] = useStore();
     const [deleteLoading, setDeleteLoading] = React.useState(false);
     const [waitTillFetch, setWaitTillFetch] = React.useState(false);
+    const notificationCtx = React.useContext(NotificationContext)
 
     React.useEffect(() => {
         if (state.notes.selectedNote !== parentProps.match.params.noteId) {
@@ -164,9 +170,10 @@ const NoteDetailScreenHook = (parentProps) => {
         const data = await response.json();
 
         if ('errors' in data) {
-            // ...
+            notificationCtx.push('Failed to delete the note', 'error');
         } else {
             parentProps.history.push('/main/homePage');
+            notificationCtx.push('Note deleted successfully!', 'success');
             dispatch('SET_NOTES', state.notes.notes.filter(note => note.id !== data.data.deleteNote.id));
         }
 

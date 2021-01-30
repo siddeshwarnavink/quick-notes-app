@@ -6,6 +6,7 @@ import { Button, Icon, Spinner } from './UI';
 import useForm from '../hooks/useForm';
 import useErrorModal from '../hooks/useErrorModal';
 import { useStore } from '../store/store';
+import NotificationContext from '../context/notification-context';
 import { loginForm, signupForm } from '../shared/forms';
 import gqlEndpoint from '../constants/gql-endpoint';
 
@@ -21,6 +22,11 @@ const AuthCard = styled.section`
     border-radius: 10px;
     margin-top: 22vh;
     box-shadow: 0 2px 4px 0 rgb(0 0 0 / 16%), 0 2px 10px 0 rgb(0 0 0 / 12%);
+
+    @media (max-width: 600px) {
+        margin-left: 10px;
+        width: 95% !important;
+    }
 `;
 
 const AuthCardLogo = styled.section`
@@ -108,6 +114,7 @@ const AuthScreenHook = (parentProps) => {
     const [state, dispatch] = useStore();
     const [loading, setLoading] = React.useState(false);
     const [error, setError] = React.useState(null);
+    const notificationCtx = React.useContext(NotificationContext);
 
     const handleAuth = async (isSignup, formFields, goToLogin) => {
         setLoading(true);
@@ -160,7 +167,11 @@ const AuthScreenHook = (parentProps) => {
                     },
                     token: data.data.loginUser.token
                 });
+                if (localStorage.getItem('userGuideCompleted')) {
+                    notificationCtx.push('Logged in successfully!', 'success');
+                }
             } else {
+                notificationCtx.push('Account created successfully!', 'success');
                 goToLogin();
             }
         }

@@ -8,6 +8,7 @@ import IdlingScreen from './IdlingScreen';
 import CreateNote from './CreateNote';
 import SplashScreen from './SplashScreen';
 import { Fab, Modal } from './UI';
+import HighlightEntityContext from '../context/highlight-entity-context';
 import { useStore } from '../store/store';
 import gqlEndpoint from '../constants/gql-endpoint';
 
@@ -17,10 +18,13 @@ const CreateNoteCaption = styled.h1`
 
 const LandingScreen = (props) => {
     const [createNoteModalOpen, setCreateNoteModalOpen] = React.useState(false);
+    const highlightEntity = React.useContext(HighlightEntityContext);
 
     const toggleCreateNoteModalHandler = () => {
         setCreateNoteModalOpen(prevState => !prevState);
     };
+
+    const isCreateNoteHighlighted = highlightEntity.highlightEl === 'CreateNote';
 
     if (props.loading) {
         return <SplashScreen />
@@ -34,8 +38,12 @@ const LandingScreen = (props) => {
 
                 <Redirect to="/main/homePage" />
             </Switch>
-
-            <Fab onClick={toggleCreateNoteModalHandler}>+</Fab>
+            <Fab
+                onClick={toggleCreateNoteModalHandler}
+                style={{ zIndex: isCreateNoteHighlighted ? 999999999999 : 'unset' }}
+            >
+                +
+            </Fab>
             <Modal
                 show={createNoteModalOpen}
                 modalClosed={toggleCreateNoteModalHandler}

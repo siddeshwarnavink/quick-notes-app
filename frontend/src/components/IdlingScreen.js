@@ -10,14 +10,19 @@ const IdlingScreenWrapper = styled.main`
     top: 40%;
     left: 53%;
 
+    @media (max-width: 600px) {
+        left: 16%;
+        top: 30%;
+    }
+
     * {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    color: #999;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        color: #999;
     }
 `;
 

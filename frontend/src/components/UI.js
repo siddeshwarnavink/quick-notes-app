@@ -9,7 +9,7 @@ const ButtonWrapper = styled.span`
     button {
         border: 2px solid #9999ff;
         padding: 10px 1rem;
-        font-size: 1rem;
+        font-size: ${p => p.size}rem;
         color: #9999ff;
         background-color: transparent;
         border-radius: 10px;
@@ -41,7 +41,8 @@ const FlatButton = styled.button`
 `;
 
 const Button = (props) => {
-    let ButtonComponent = 'button'
+    let ButtonComponent = 'button';
+    let buttonSize;
 
     switch (props.varient) {
         case 'hollow':
@@ -58,12 +59,24 @@ const Button = (props) => {
             break;
     }
 
+    switch (props.size) {
+        case 'medium':
+            buttonSize = 1.5;
+            break;
+        case 'large':
+            buttonSize = 2;
+            break;
+        default:
+            buttonSize = 1;
+            break;
+    }
+
     if (props.varient === 'solid') {
         ButtonComponent = SolidButton;
     }
 
     return (
-        <ButtonWrapper>
+        <ButtonWrapper size={buttonSize}>
             <ButtonComponent
                 disabled={props.disabled}
                 type={props.btnType}
@@ -79,7 +92,8 @@ Button.defaultProps = {
     varient: 'hollow',
     btnType: 'button',
     disabled: false,
-    onClick: () => { }
+    onClick: () => { },
+    size: 'normal'
 };
 
 
@@ -167,11 +181,15 @@ const FabButton = styled.button`
 
 const Fab = (props) => {
     return (
-        <FabButton onClick={props.onClick}>
+        <FabButton onClick={props.onClick} style={props.style}>
             {props.children}
         </FabButton>
     )
 }
+
+Fab.defaultProps = {
+    style: {}
+};
 
 
 /**
@@ -347,6 +365,13 @@ const ModalBox = styled.div`
     overflow-y: scroll;
     box-sizing: border-box;
     transition: all 0.3s ease-out;
+
+    @media (max-width: 600px) {
+        top: 25%;
+        left: 0 !important;
+        margin-left: 5px;
+        width: 97.5% !important;
+    }
 `;
 
 const ModalClose = styled.span`

@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { Button } from './UI';
+import { Button, IconButton } from './UI';
+import TheDrawerToggle from './TheDrawerToggle';
 
 const HeaderWrapper = styled.header`
     background-color: #fff;
@@ -31,9 +32,30 @@ const HeaderAction = styled.section`
     padding: 0 1rem;
 `;
 
+const MobileButton = styled.span`
+    display: none;
+    @media (max-width: 600px) {
+        display: unset;
+    }
+`;
+
+const DesktopButton = styled.span`
+    display: unset;
+    @media (max-width: 600px) {
+        display: none;
+    }
+`;
+
 const TheHeader = (props) => {
     return (
         <HeaderWrapper>
+            {!props.noDrawerToggle && (
+                <TheDrawerToggle
+                    isSideDrawOpen={props.isSideDrawOpen}
+                    toggleSideDrawer={props.toggleSideDrawer}
+                />
+            )}
+
             <Link to="/" style={{ textDecoration: 'none', color: '#000' }}>
                 <HeaderBrandName>QuickNotes</HeaderBrandName>
             </Link>
@@ -41,10 +63,19 @@ const TheHeader = (props) => {
             <HeaderSpacer />
 
             <HeaderAction>
-                <Button varient="solid" onClick={props.openUserProfile}>My Profile</Button>
+                <DesktopButton>
+                    <Button varient="solid" onClick={props.openUserProfile}>My Profile</Button>
+                </DesktopButton>
+                <MobileButton>
+                    <IconButton icon="face" onClick={props.openUserProfile} />
+                </MobileButton>
             </HeaderAction>
         </HeaderWrapper>
     );
+};
+
+TheHeader.defaultProps = {
+    noDrawerToggle: false
 };
 
 export default TheHeader;

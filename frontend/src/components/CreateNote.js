@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { Button, Spinner } from './UI'
 import useForm from '../hooks/useForm.js';
 import { useStore } from '../store/store';
+import NotificationContext from '../context/notification-context';
 import { createNotesForm } from '../shared/forms';
 import gqlEndpoint from '../constants/gql-endpoint';
 
@@ -62,6 +63,7 @@ const CreateNoteHook = (parentProps) => {
     const [state, dispatch] = useStore();
     const [isLoading, setIsLoading] = React.useState(false);
     const [error, setError] = React.useState(null);
+    const notificationCtx = React.useContext(NotificationContext)
 
     const currentNote = state.notes.notes.find(note => note.id === state.notes.selectedNote);
 
@@ -75,6 +77,14 @@ const CreateNoteHook = (parentProps) => {
         displayForm['content'].value = currentNote.content;
         displayForm['content'].valid = true;
         displayForm['content'].touched = true;
+    } else {
+        displayForm['title'].value = '';
+        displayForm['title'].valid = false;
+        displayForm['title'].touched = false;
+
+        displayForm['content'].value = '';
+        displayForm['content'].valid = false;
+        displayForm['content'].touched = false;
     }
 
     const updateNoteHandler = async (formFields, callback) => {
@@ -103,6 +113,8 @@ const CreateNoteHook = (parentProps) => {
 
             if ('errors' in data) {
                 setError(data.errors[0]);
+
+                notificationCtx.push('Failed to create the note', 'error');
             } else {
                 dispatch('SET_NOTES', [
                     {
@@ -112,6 +124,7 @@ const CreateNoteHook = (parentProps) => {
                     },
                     ...state.notes.notes
                 ]);
+                notificationCtx.push('Note created successfully!', 'success');
                 callback();
             }
         } else {
@@ -137,6 +150,8 @@ const CreateNoteHook = (parentProps) => {
 
             if ('errors' in data) {
                 setError(data.errors[0]);
+
+                notificationCtx.push('Failed to update the note', 'error');
             } else {
                 dispatch('SET_NOTES', [
                     {
@@ -146,6 +161,7 @@ const CreateNoteHook = (parentProps) => {
                     },
                     ...state.notes.notes.filter(note => note.id !== currentNote.id)
                 ]);
+                notificationCtx.push('Note updated successfully!', 'success');
                 callback();
             }
         }
