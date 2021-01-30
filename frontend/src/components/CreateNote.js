@@ -121,6 +121,7 @@ const CreateNoteHook = (parentProps) => {
                         id: data.data.createNote.id,
                         title: data.data.createNote.title,
                         content: data.data.createNote.content,
+                        created_at: new Date().toISOString()
                     },
                     ...state.notes.notes
                 ]);
@@ -158,6 +159,7 @@ const CreateNoteHook = (parentProps) => {
                         id: data.data.updateNote.id,
                         title: data.data.updateNote.title,
                         content: data.data.updateNote.content,
+                        ...state.notes.notes.find(note => note.id === currentNote.id)
                     },
                     ...state.notes.notes.filter(note => note.id !== currentNote.id)
                 ]);

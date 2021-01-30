@@ -41,6 +41,11 @@ const NoteContent = styled.p`
     padding: 0 1rem;
 `;
 
+const NoteTimestamp = styled.p`
+    padding: 0 1rem;
+    color: #999;
+`;
+
 const NoteDetailScreen = (props) => {
     const [showDeleteAlertModal, setShowDeleteAlertModal] = React.useState(false);
     const [isEditActive, setIsEditActive] = React.useState(false);
@@ -66,8 +71,15 @@ const NoteDetailScreen = (props) => {
     let pageContent;
 
     if (!props.loading) {
+        console.log(props.currentNote);
+
+        const createdAt = new Date(props.currentNote.created_at).toDateString();
+
         pageContent = (
-            <NoteContent>{props.currentNote.content}</NoteContent>
+            <React.Fragment>
+                <NoteContent>{props.currentNote.content}</NoteContent>
+                <NoteTimestamp>Created at {createdAt}</NoteTimestamp>
+            </React.Fragment>
         );
 
         if (isEditActive) {

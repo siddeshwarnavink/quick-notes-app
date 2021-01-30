@@ -6,7 +6,7 @@ type User {
 
 type AuthData {
   userId: Int!
-  token: String!,
+  token: String!
   user: User
 }
 
@@ -20,6 +20,8 @@ type Note {
   title: String!
   content: String
   creator: User
+  created_at: String
+  updated_at: String
 }
 
 type RootQuery {
