@@ -1,12 +1,28 @@
 {
-    "name": "siddeshwar/quick-notes-app",
-    "description": "A quick notes app indeed!",
-    "type": "project",
-    "authors": [
-        {
-            "name": "Siddeshwar",
-            "email": "siddeshwar.work@gmail.com"
-        }
-    ],
-    "require": {}
+  "name": "siddeshwar/quick-notes-app",
+  "description": "A quick notes app indeed!",
+  "type": "project",
+  "config": {
+    "platform": {
+      "php": "5.6"
+    }
+  },
+  "authors": [
+    {
+      "name": "Siddeshwar",
+      "email": "siddeshwar.work@gmail.com"
+    }
+  ],
+  "require": {
+    "illuminate/database": "^5.2",
+    "respect/validation": "^1.1",
+    "firebase/php-jwt": "^5.2",
+    "webonyx/graphql-php": "^0.12.6",
+    "vlucas/phpdotenv": "^4.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "Siddeshrocks\\": "app"
+    }
+  }
 }
