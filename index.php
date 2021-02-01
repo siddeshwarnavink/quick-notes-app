@@ -9,6 +9,7 @@ $rawInput = file_get_contents('php://input');
 $input = json_decode($rawInput, true);
 $query = $input['query'];
 
+$dotEnv = require('./containers/DotEnv.php');
 $capsule = require('./containers/Capsule.php');
 $isAuth = require('./containers/IsAuth.php');
 
@@ -23,7 +24,8 @@ try {
         'validator' => function () {
             return new \Siddeshrocks\Validation\Validator;
         },
-        'isAuth' => $isAuth
+        'isAuth' => $isAuth,
+        'dotEnv' => $dotEnv
     ];
 
     $resolvers = require('./graphql/resolvers/root.php');

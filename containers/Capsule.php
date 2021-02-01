@@ -5,13 +5,13 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 $capsule = new Capsule;
 
 $capsule->addConnection([
-    'driver'    => 'mysql',
-    'host'      => '127.0.0.1',
-    'database'  => 'quick-notes-app',
-    'username'  => 'root',
-    'password'  => '',
-    'charset'   => 'utf8',
-    'collation' => 'utf8_unicode_ci',
+    'driver'    => $_ENV['DATABASE_DRIVER'],
+    'host'      => $_ENV['DATABASE_HOST'],
+    'database'  => $_ENV['DATABASE_NAME'],
+    'username'  => $_ENV['DATABASE_USERNAME'],
+    'password'  => $_ENV['DATABASE_PASSWORD'],
+    'charset'   => $_ENV['DATABASE_CHARSET'],
+    'collation' => $_ENV['DATABASE_COLLATION'],
     'prefix'    => '',
 ]);
 
