@@ -11,11 +11,9 @@ return [
 
         if ($user) {
             if (password_verify($args['password'], $user->password)) {
-                $key = require('./shared/JWTKey.php');
-
                 $jwt = JWT::encode([
                     'user' => $user
-                ], $key);
+                ], $_ENV['JWT_KEY']);
 
                 return [
                     'userId' => $user->id,
@@ -61,7 +59,7 @@ return [
 
 
     'verifyLogin' => function ($root, $args) {
-        $key = require('./shared/JWTKey.php');
+        $key = $_ENV['JWT_KEY'];
         $decoded = JWT::decode($args['token'], $key, array('HS256'));
 
         if ($decoded) {

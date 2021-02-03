@@ -2,14 +2,10 @@
 
 use \Firebase\JWT\JWT;
 
-$headers = getAllHeaders();
+if (isset($_GET['Authorization'])) {
+    $token = explode(" ", $_GET['Authorization'])[1];
 
-if (isset($headers['Authorization'])) {
-    $key = require('./shared/JWTKey.php');
-
-    $token = explode(" ", $headers['Authorization'])[1];
-
-    $decoded = JWT::decode($token, $key, array('HS256'));
+    $decoded = JWT::decode($token, $_ENV['JWT_KEY'], array('HS256'));
 
     if ($decoded) {
         return $decoded;

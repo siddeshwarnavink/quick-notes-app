@@ -40,11 +40,10 @@ const NotesListHook = () => {
         (async () => {
             dispatch('SET_NOTES_LOADING', true);
 
-            const response = await fetch(gqlEndpoint, {
+            const response = await fetch(`${gqlEndpoint}?Authorization=Bearer ${state.auth.token}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${state.auth.token}`
                 },
                 body: JSON.stringify({
                     query: `
